@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Parcours – Roubaix</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <style>
+        /* ---------- STYLES COMPACTS & ÉLÉGANTS ---------- */
+        :root {
+            --bg: #f6f9fc;
+            --surface: #ffffff;
+            --border-light: #e9ecf0;
+            --border-focus: #a0c6e9;
+            --text-primary: #1a2634;
+            --text-secondary: #5c6a77;
+            --text-muted: #8598a6;
+            --accent: #3b82f6;
+            --accent-light: #ebf4ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.03), 0 2px 5px rgba(0, 0, 0, 0.02);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --transition: all 0.12s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.4;
+            font-size: 13px;
+            padding: 16px 16px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.1rem;
+            color: #0a2c3d;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: var(--text-primary);
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* Cartes */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            background: rgba(255,255,255,0.6);
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        /* Boutons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .btn:hover {
+            background: #f9fbfd;
+            border-color: #cbd5e1;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .btn-danger {
+            background: white;
+            color: var(--error);
+            border-color: #fee2e2;
+        }
+
+        .btn-danger:hover {
+            background: #fee2e2;
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .btn-secondary {
+            background: white;
+            border-color: var(--border-light);
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.7rem;
+        }
+
+        /* Champs de formulaire */
+        .form-control {
+            width: 100%;
+            padding: 0.5rem 0.875rem;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.08);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 0.75rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            font-size: 0.85rem;
+        }
+
+        .search-input {
+            padding-left: 2.4rem;
+        }
+
+        /* Liste participants */
+        .participants-list {
+            max-height: 460px;
+            overflow-y: auto;
+            border-radius: var(--radius-sm);
+            background: white;
+            border: 1px solid var(--border-light);
+        }
+
+        .participant-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .participant-item:last-child {
+            border-bottom: none;
+        }
+
+        .participant-item:hover {
+            background: var(--accent-light);
+        }
+
+        .participant-item.selected {
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+        }
+
+        .participant-item div:first-child {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        /* Kiosques tabs */
+        .kiosque-selector {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .kiosque-tab {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .kiosque-tab:hover {
+            background: #f1f5f9;
+            border-color: #b9c7d4;
+        }
+
+        .kiosque-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .kiosque-tab.completed {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        /* Processus */
+        .processus-item {
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .processus-item:hover {
+            background: #fafcfc;
+            border-color: #cbd5e1;
+        }
+
+        .processus-checkbox {
+            width: 0.95rem;
+            height: 0.95rem;
+            margin-right: 0.75rem;
+            accent-color: var(--accent);
+            border-radius: 3px;
+        }
+
+        .processus-remove {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 40px;
+            transition: var(--transition);
+            line-height: 1;
+        }
+
+        .processus-remove:hover {
+            background: #fee2e2;
+            color: var(--error);
+        }
+
+        .custom-processus-add {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .custom-processus-add input {
+            flex: 1;
+        }
+
+        /* Historique */
+        #history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        #history-list > div {
+            background: #f9fbfd;
+            border-radius: 40px;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
+            font-size: 0.8rem;
+        }
+
+        #history-list > div:hover {
+            background: white;
+            border-color: #b9c7d4;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 580px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-md);
+            border: none;
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin-bottom: 0;
+            font-size: 1.2rem;
+        }
+
+        .modal-header button {
+            font-size: 1.6rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
+            line-height: 1;
+        }
+
+        .modal-header button:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* Zone de dépôt de fichier */
+        .file-drop-area {
+            border: 2px dashed #dbe4ea;
+            border-radius: var(--radius);
+            padding: 2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 1.25rem;
+            transition: var(--transition);
+            background: #fafdff;
+        }
+
+        .file-drop-area:hover,
+        .file-drop-area.dragover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .file-drop-area div:first-child {
+            font-size: 2.4rem;
+            color: var(--text-muted);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .toast {
+            min-width: 260px;
+            padding: 0.75rem 1.1rem;
+            background: white;
+            border-radius: 50px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border-left: 5px solid var(--accent);
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.96);
+            font-size: 0.8rem;
+        }
+
+        .toast button {
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 0.2rem;
+            border-radius: 40px;
+        }
+
+        .toast button:hover {
+            background: #f1f5f9;
+            color: var(--text-primary);
+        }
+
+        /* État vide */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 220px;
+            padding: 1.5rem;
+            color: var(--text-muted);
+            background: #f9fbfd;
+            border-radius: var(--radius);
+        }
+
+        .empty-state div:first-child {
+            font-size: 2.6rem;
+            margin-bottom: 0.6rem;
+            opacity: 0.7;
+        }
+
+        /* Session name editable */
+        .editable {
+            cursor: pointer;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            background: #eef2f6;
+            display: inline-block;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .editable:hover {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        /* Petits ajustements */
+        #detail-extra {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        #kiosque-details {
+            background: #f9fbfd;
+            padding: 0.9rem 1.25rem;
+            border-radius: 40px;
+            margin-bottom: 1.25rem;
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+        }
+
+        #kiosque-details strong {
+            color: #1e3a5f;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-light);
+            margin: 1rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            body { padding: 16px; }
+            div[style*="grid-template-columns: 1fr 2fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* Badge de validation */
+        .participant-item [style*="color:var(--success)"] {
+            background: #e0f2e9;
+            color: #0b6e4f !important;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 0.25rem;
+            border: none;
+        }
+
+        /* Titre caché pour le JS (remplace l'ancien card-header) */
+        #selected-participant-title {
+            display: none;
+        }
+
+        /* Grille plus serrée */
+        div[style*="display:grid; grid-template-columns: 1fr 2fr; gap:1.75rem;"] {
+            gap: 1rem !important;
+        }
+
+        /* Header plus compact */
+        header {
+            margin-bottom: 1.5rem !important;
+            padding-bottom: 0.75rem !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== HEADER COMPACT ========== -->
+    <header style="margin-bottom:1.5rem; padding-bottom:0.75rem; border-bottom:1px solid var(--border-light);">
+        <h1><b><center>Gestion Parcours – FT Roubaix Centre</center></b></h1>
+        <div class="text-muted" style="text-align:center;">Suivi des participants et validation des processus</div>
+    </header>
+
+    <!-- ========== BANDEAU SESSION ========== -->
+    <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-body" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+            <div>
+                <span id="session-name" class="editable" title="Cliquer pour renommer">Session principale</span><br>
+                <span class="text-muted">Début : <span id="session-date">—</span></span>
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+                <button id="load-participants-btn" class="btn btn-primary">📋 Charger liste</button>
+                <button id="new-session-btn" class="btn btn-secondary">🔄 Nouvelle session</button>
+                <button id="close-session-btn" class="btn btn-danger">🔒 Clore session</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Élément caché pour le JavaScript (ex-title du participant) -->
+    <span id="selected-participant-title" style="display:none;"></span>
+
+    <!-- ========== GRILLE PRINCIPALE ========== -->
+    <div style="display:grid; grid-template-columns:1fr 2fr; gap:1rem;">
+        <!-- Colonne participants -->
+        <div class="card">
+            <div class="card-header"><h2>Participants</h2></div>
+            <div class="card-body">
+                <div class="search-box">
+                    <div class="search-icon">🔍</div>
+                    <input type="text" id="search-input" class="form-control search-input" placeholder="Rechercher nom, prénom, ID...">
+                </div>
+
+                <div id="participants-list" class="participants-list">
+                    <div class="empty-state">
+                        <div>👥</div>
+                        <p>Aucun participant chargé</p>
+                    </div>
+                </div>
+
+                <div style="margin-top:1rem; display:flex; gap:1rem; font-size:0.8rem; color:var(--text-secondary);">
+                    <div>Participants : <strong id="participants-count">0</strong></div>
+                    <div>Validations : <strong id="validations-count">0</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne détail participant + kiosques (SANS le card-header) -->
+        <div class="card">
+            <div class="card-body" id="participant-detail-view">
+                <div class="empty-state" id="no-participant-selected">
+                    <div>👈 📜</div>
+                    <p>Sélectionnez un participant dans la liste</p>
+                </div>
+
+                <div id="kiosque-container" style="display:none;">
+                    <!-- Infos participant -->
+                    <div style="background:var(--accent-light); padding:0.9rem 1.25rem; border-radius:40px; margin-bottom:1.25rem; border:1px solid #d9e9ff;">
+                        <div style="font-weight:600; font-size:1rem;" id="detail-nom-prenom"></div>
+                        <div class="text-muted" id="detail-id"></div>
+                        <div style="margin-top:0.3rem; font-size:0.8rem;" id="detail-extra"></div>
+                    </div>
+
+                    <!-- Tabs kiosques -->
+                    <div class="kiosque-selector">
+                        <button class="kiosque-tab active" data-kiosque="1">Kiosque 1</button>
+                        <button class="kiosque-tab" data-kiosque="2">Kiosque 2</button>
+                        <button class="kiosque-tab" data-kiosque="3">Kiosque 3</button>
+                        <button class="kiosque-tab" data-kiosque="4">Kiosque 4</button>
+                        <button class="kiosque-tab" data-kiosque="5">Kiosque 5</button>
+                        <button class="kiosque-tab" data-kiosque="6">Kiosque 6</button>
+                    </div>
+
+                    <!-- Détail kiosque -->
+                    <div id="kiosque-details"></div>
+
+                    <!-- Liste processus -->
+                    <div id="processus-container" style="margin-bottom:1.25rem;"></div>
+
+                    <!-- Historique -->
+                    <div id="history-container">
+                        <h3 style="margin-bottom:0.6rem; font-weight:600; font-size:1rem;">Historique</h3>
+                        <div id="history-list" style="max-height:220px; overflow-y:auto;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL IMPORT ========== -->
+    <div id="file-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Importer participants</h2>
+                <button id="close-file-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom:0.75rem; color:var(--text-secondary); font-size:0.85rem;">Formats acceptés : .csv, .xlsx, .xls</p>
+                <div class="file-drop-area" id="file-drop-area">
+                    <div>📁</div>
+                    <p>Glissez-déposez votre fichier ici<br>ou cliquez pour parcourir</p>
+                </div>
+                <input type="file" id="file-input" accept=".csv,.xlsx,.xls" style="display:none;">
+                <div id="file-preview" style="display:none; margin-top:1.25rem;">
+                    <h3 style="margin-bottom:0.5rem; font-size:0.9rem;">Aperçu</h3>
+                    <pre id="file-preview-content" style="background:#f9fbfd; padding:0.75rem; border-radius:16px; max-height:180px; overflow:auto; font-size:0.75rem; border:1px solid var(--border-light);"></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-file-btn">Annuler</button>
+                <button class="btn btn-primary" id="import-file-btn" disabled>Importer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TOAST ========== -->
+    <div class="toast-container" id="toast-container"></div>
+
+        <!-- ========== COPYRIGHT ========== -->
+        <footer style="margin-top:2rem; padding-top:1rem; border-top:1px solid var(--border-light); text-align:center; color:var(--text-muted); font-size:0.7rem;">
+            © 2026 Gestion Parcours – FT Roubaix Centre. Tous droits réservés.
+        </footer>
+
+    <script>
+        // ────────────────────────────────────────────────
+        // ÉTAT GLOBAL – (STRICTEMENT INCHANGÉ)
+        // ────────────────────────────────────────────────
+        const state = {
+            currentSession: {
+                id: `sess_${Date.now()}`,
+                name: "Session principale",
+                status: "active",
+                startDate: new Date().toISOString()
+            },
+            participants: [],
+            selectedParticipantId: null,
+            selectedKiosque: 1,
+            validations: [],
+            customProcesses: [],
+            kiosques: {
+                1: { 
+                    name: "Kiosque 1 – Mise à jour coordonnées & ORE", 
+                    processus: [
+                        "Coordonnées : vérification coordonnée",
+                        "Vérification du métier: métier recherché correspond compétences/qualifications/expérience",
+                        "Vérifier les critères de recherche d'emploi et leur cohérence",
+                        "Contrainte : prise en compte des contraintes personnelles",
+                        "Validation : compréhension et acceptation de l’offre raisonnable d’emploi"
+                    ]
+                },
+                2: { 
+                    name: "Kiosque 2 – CV", 
+                    processus: [
+                        "Profil : carte de visite visible et profil complété",
+                        "CV mise à jour",
+                        "Accord Promotion de profil",
+                        "Mise à jour cv : créer cv",
+                        "CV lié à la carte de visite",
+                        "Validation : RMO à valider"
+                    ]
+                },
+                3: { 
+                    name: "Kiosque 3 – Ateliers & prestations", 
+                    processus: [
+                        "Atelier R01 : Construire et affiner mon projet pro",
+                        "Atelier R02 : Faire le point sur mes compétences et concevoir cv",
+                        "Atelier R04 : Mes démarches en ligne avec FT",
+                        "Atelier R05 : Organiser et optimiser ma recherche d’emploi",
+                        "Atelier R06 : M’imaginer créateur d’entreprise",
+                        "Atelier R07 : Structurer mon projet de création d’entreprise",
+                        "Prestation VSI : Valoriser son image pro",
+                        "Prestation AP2 : Activ’projet",
+                        "Prestation UES : Un emploi stable",
+                        "Prestation GCO : Prepa’compétences",
+                        "Prestation MBI : Bilan mobilité",
+                        "Prestation PIX/SEVE : Test numérique / S’engager vers l’emploi"
+                    ]
+                },
+                4: { 
+                    name: "Kiosque 4 – Intermédiation", 
+                    processus: [
+                        "Réalisation de MER",
+                        "Positionner sur MEE et Z20 en ciblant dans le VNE",
+                        "Inviter DE à rencontrer les entreprises"
+                    ]
+                },
+                5: { 
+                    name: "Kiosque 5 – Indemnisation", 
+                    processus: [
+                        "Informer DE sur ces questions GDD"
+                    ]
+                },
+                6: { 
+                    name: "Kiosque 6 – Signature CED & EDP", 
+                    processus: [
+                        "Informer sur les Engagements DE / Conseiller",
+                        "Rappel des sanctions encourues",
+                        "Signature CED",
+                        "Rédaction EDP et cochez OUI pour le DSP",
+                        "Orientation: EE",
+                        "Orientation: SENIOR",
+                        "Orientation: GLO"
+                    ]
+                }
+            }
+        };
+
+        // ────────────────────────────────────────────────
+        // ÉLÉMENTS DOM
+        // ────────────────────────────────────────────────
+        const dom = {
+            participantsList: document.getElementById("participants-list"),
+            searchInput: document.getElementById("search-input"),
+            selectedTitle: document.getElementById("selected-participant-title"),
+            noSelected: document.getElementById("no-participant-selected"),
+            kiosqueContainer: document.getElementById("kiosque-container"),
+            processusContainer: document.getElementById("processus-container"),
+            historyList: document.getElementById("history-list"),
+            participantsCount: document.getElementById("participants-count"),
+            validationsCount: document.getElementById("validations-count"),
+            sessionName: document.getElementById("session-name"),
+            sessionDate: document.getElementById("session-date"),
+            detailNomPrenom: document.getElementById("detail-nom-prenom"),
+            detailId: document.getElementById("detail-id"),
+            detailExtra: document.getElementById("detail-extra"),
+            kiosqueDetails: document.getElementById("kiosque-details"),
+            fileModal: document.getElementById("file-modal"),
+            fileInput: document.getElementById("file-input"),
+            importBtn: document.getElementById("import-file-btn"),
+            filePreview: document.getElementById("file-preview"),
+            filePreviewContent: document.getElementById("file-preview-content")
+        };
+
+        // ────────────────────────────────────────────────
+        // FONCTIONS UTILITAIRES – IDENTIQUES
+        // ────────────────────────────────────────────────
+        function showToast(msg, type = "info") {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            toast.className = `toast`;
+            toast.style.borderLeft = `4px solid ${type==='success'? 'var(--success)' : type==='error'?'var(--error)':'var(--accent)'}`;
+            toast.innerHTML = `<div>${msg}</div><button style="margin-left:auto; background:none; border:none; font-size:1.2rem; cursor:pointer;">×</button>`;
+            container.appendChild(toast);
+            toast.querySelector("button").onclick = () => toast.remove();
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        function saveState() {
+            localStorage.setItem("kiosqueAppState", JSON.stringify(state));
+        }
+
+        function capitalize(str) {
+            return (str || "").trim().replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function excelDateToJSDate(serial) {
+            if (typeof serial !== 'number') return serial;
+            const utc_days = Math.floor(serial - 25569);
+            const utc_value = utc_days * 86400;
+            const date = new Date(utc_value * 1000);
+            return date.toLocaleDateString('fr-FR');
+        }
+
+        // ────────────────────────────────────────────────
+        // GESTION DU NOM DE SESSION
+        // ────────────────────────────────────────────────
+        function enableSessionNameEditing() {
+            const sessionNameEl = dom.sessionName;
+            sessionNameEl.addEventListener("click", function edit() {
+                const currentName = state.currentSession.name;
+                const newName = prompt("Renommer la session :", currentName);
+                if (newName && newName.trim() !== "" && newName !== currentName) {
+                    state.currentSession.name = newName.trim();
+                    sessionNameEl.textContent = state.currentSession.name;
+                    saveState();
+                    showToast("Session renommée", "success");
+                }
+            });
+        }
+
+        function setSessionName(name) {
+            state.currentSession.name = name;
+            dom.sessionName.textContent = name;
+            saveState();
+        }
+
+        // ────────────────────────────────────────────────
+        // EXPORT CSV
+        // ────────────────────────────────────────────────
+        function exportSessionToCSV() {
+            const rows = [];
+            rows.push([
+                "Type",
+                "ID Participant",
+                "Nom",
+                "Prénom",
+                "Email",
+                "Téléphone",
+                "Date naissance",
+                "Kiosque",
+                "Processus",
+                "Date validation",
+                "Personnalisé ?"
+            ].join(";"));
+
+            state.participants.forEach(p => {
+                rows.push([
+                    "Participant",
+                    p.id,
+                    p.nom,
+                    p.prenom,
+                    p.email || "",
+                    p.telephone || "",
+                    p.dateNaissance || "",
+                    "", "", "", ""
+                ].join(";"));
+            });
+
+            state.validations.forEach(v => {
+                const p = state.participants.find(p => p.id === v.participantId);
+                let processName = v.processusName || '';
+                let isCustom = '';
+                if (v.customProcessId) {
+                    const custom = state.customProcesses.find(c => c.id === v.customProcessId);
+                    processName = custom ? custom.processName : '[supprimé]';
+                    isCustom = 'Oui';
+                }
+                rows.push([
+                    "Validation",
+                    v.participantId,
+                    p ? p.nom : "",
+                    p ? p.prenom : "",
+                    p ? p.email || "" : "",
+                    p ? p.telephone || "" : "",
+                    p ? p.dateNaissance || "" : "",
+                    v.kiosqueId,
+                    processName,
+                    new Date(v.date).toLocaleString("fr-FR"),
+                    isCustom
+                ].join(";"));
+            });
+
+            const csvContent = "\uFEFF" + rows.join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `session_${state.currentSession.name.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ────────────────────────────────────────────────
+        // GESTION DES ÉTAPES PERSONNALISÉES
+        // ────────────────────────────────────────────────
+        function addCustomProcess(participantId, kiosqueId, processName) {
+            if (!processName.trim()) {
+                showToast("Veuillez saisir un nom pour l'étape", "warning");
+                return;
+            }
+            const newCustom = {
+                id: `custom_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+                participantId,
+                kiosqueId,
+                processName: processName.trim(),
+                dateAdded: new Date().toISOString()
+            };
+            state.customProcesses.push(newCustom);
+            saveState();
+            updateProcessusList();
+            showToast("Étape personnalisée ajoutée", "success");
+        }
+
+        function removeCustomProcess(customProcessId) {
+            state.customProcesses = state.customProcesses.filter(c => c.id !== customProcessId);
+            state.validations = state.validations.filter(v => v.customProcessId !== customProcessId);
+            saveState();
+            updateProcessusList();
+            updateHistory();
+            updateStats();
+            updateParticipantsList(dom.searchInput.value);
+            showToast("Étape personnalisée supprimée", "info");
+        }
+
+        // ────────────────────────────────────────────────
+        // IMPORT – INCHANGÉ
+        // ────────────────────────────────────────────────
+        function handleFile(file) {
+            const ext = file.name.split(".").pop().toLowerCase();
+            if (!["csv","xlsx","xls"].includes(ext)) {
+                showToast("Format non supporté (.csv, .xlsx, .xls)", "error");
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = e => {
+                try {
+                    if (ext === "csv") {
+                        const text = e.target.result;
+                        dom.filePreviewContent.textContent = text.split("\n").slice(0,6).join("\n");
+                        dom.filePreview.style.display = "block";
+                        dom.importBtn.disabled = false;
+                        dom.importBtn.onclick = () => importFile(file, text, ext);
+                    } else {
+                        const buffer = e.target.result;
+                        const workbook = XLSX.read(buffer, {type:"array"});
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(sheet, {header:1, defval:""}).slice(0,6);
+                        dom.filePreviewContent.textContent = rows.map(r => r.join(" | ")).join("\n");
+                        dom.filePreview.style.display = "block";
+                        dom.importBtn.disabled = false;
+                        dom.importBtn.onclick = () => importFile(file, buffer, ext);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast("Erreur lecture fichier", "error");
+                }
+            };
+
+            if (ext === "csv") {
+                reader.readAsText(file, "utf-8");
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function importFile(file, data, ext) {
+            try {
+                let participants = [];
+                if (ext === "csv") {
+                    participants = parseCSV(data);
+                } else {
+                    participants = parseExcel(data);
+                }
+
+                if (participants.length === 0) {
+                    throw new Error("Aucun participant valide trouvé");
+                }
+
+                const existing = new Set(state.participants.map(p => p.id.trim()));
+                const toAdd = [];
+                const duplicates = [];
+
+                participants.forEach(p => {
+                    const id = p.id.trim();
+                    if (existing.has(id)) {
+                        duplicates.push(p);
+                    } else {
+                        toAdd.push(p);
+                        existing.add(id);
+                    }
+                });
+
+                if (toAdd.length === 0 && duplicates.length > 0) {
+                    showToast(`${duplicates.length} participant(s) déjà présent(s)`, "warning");
+                    return;
+                }
+
+                state.participants.push(...toAdd);
+                updateParticipantsList(dom.searchInput.value);
+                updateStats();
+                saveState();
+
+                let msg = `${toAdd.length} participant(s) ajouté(s)`;
+                if (duplicates.length > 0) {
+                    msg += ` • ${duplicates.length} doublon(s) ignoré(s)`;
+                }
+                showToast(msg, toAdd.length > 0 ? "success" : "warning");
+
+                dom.fileModal.style.display = "none";
+                dom.fileInput.value = "";
+                dom.filePreview.style.display = "none";
+                dom.importBtn.disabled = true;
+
+                if (state.selectedParticipantId) {
+                    const stillExists = state.participants.some(p => p.id === state.selectedParticipantId);
+                    if (!stillExists) state.selectedParticipantId = null;
+                    else updateParticipantDetail();
+                }
+
+            } catch (err) {
+                console.error(err);
+                showToast("Erreur lors de l'import : " + err.message, "error");
+            }
+        }
+
+        function parseCSV(text) {
+            const lines = text.replace(/\r/g,"").split("\n").filter(l=>l.trim());
+            if (lines.length < 2) return [];
+
+            const delimiter = lines[0].includes(";") ? ";" : ",";
+            const headers = lines[0].split(delimiter).map(h => h.trim().replace(/^"|"$/g,"").toLowerCase());
+
+            const col = {
+                id: headers.findIndex(h => h.includes("numéro") || h.includes("id")),
+                nom: headers.findIndex(h => h.includes("nom")),
+                prenom: headers.findIndex(h => h.includes("prénom") || h.includes("prenom")),
+                email: headers.findIndex(h => h.includes("email") || h.includes("mail")),
+                tel: headers.findIndex(h => h.includes("tél") || h.includes("tel") || h.includes("mobile")),
+                naissance: headers.findIndex(h => h.includes("naissance"))
+            };
+
+            if (col.id === -1 || col.nom === -1 || col.prenom === -1) {
+                throw new Error("Colonnes obligatoires manquantes (ID, Nom, Prénom)");
+            }
+
+            const result = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(delimiter).map(v => v.trim().replace(/^"|"$/g,""));
+                const p = {
+                    id: values[col.id] || "",
+                    nom: (values[col.nom] || "").toUpperCase().trim(),
+                    prenom: capitalize(values[col.prenom] || ""),
+                    email: (values[col.email] || "").toLowerCase().trim(),
+                    telephone: (values[col.tel] || "").replace(/\s/g,""),
+                    dateNaissance: values[col.naissance] || ""
+                };
+
+                if (p.id && p.id.trim() !== '' && p.nom && p.prenom) {
+                    result.push(p);
+                }
+            }
+            return result;
+        }
+
+        function parseExcel(buffer) {
+            const workbook = XLSX.read(buffer, {type:"array"});
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const data = XLSX.utils.sheet_to_json(sheet, {header:1, defval:""});
+
+            if (data.length < 2) return [];
+
+            const headers = data[0].map(h => String(h||"").trim().toLowerCase());
+            const col = {
+                id: headers.findIndex(h => h.includes("numéro") || h.includes("id")),
+                nom: headers.findIndex(h => h.includes("nom")),
+                prenom: headers.findIndex(h => h.includes("prénom") || h.includes("prenom")),
+                email: headers.findIndex(h => h.includes("email") || h.includes("mail")),
+                tel: headers.findIndex(h => h.includes("tél") || h.includes("tel") || h.includes("mobile")),
+                naissance: headers.findIndex(h => h.includes("naissance"))
+            };
+
+            if (col.id === -1 || col.nom === -1 || col.prenom === -1) {
+                throw new Error("Colonnes obligatoires manquantes (ID, Nom, Prénom)");
+            }
+
+            const result = [];
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                const p = {
+                    id: String(row[col.id] || "").trim(),
+                    nom: String(row[col.nom] || "").toUpperCase().trim(),
+                    prenom: capitalize(String(row[col.prenom] || "").trim()),
+                    email: String(row[col.email] || "").toLowerCase().trim(),
+                    telephone: String(row[col.tel] || "").replace(/\s/g,""),
+                    dateNaissance: String(row[col.naissance] || "")
+                };
+
+                if (col.naissance !== -1 && row[col.naissance] && !isNaN(parseFloat(row[col.naissance]))) {
+                    p.dateNaissance = excelDateToJSDate(parseFloat(row[col.naissance]));
+                }
+
+                if (p.id && p.id !== '' && p.nom && p.prenom) {
+                    result.push(p);
+                }
+            }
+            return result;
+        }
+
+        // ────────────────────────────────────────────────
+        // MISE À JOUR INTERFACE – INCHANGÉE
+        // ────────────────────────────────────────────────
+        function updateParticipantsList(filter = "") {
+            const f = filter.toLowerCase().trim();
+            const list = state.participants.filter(p =>
+                p.nom.toLowerCase().includes(f) ||
+                p.prenom.toLowerCase().includes(f) ||
+                p.id.includes(f)
+            );
+
+            dom.participantsList.innerHTML = list.length === 0
+                ? `<div class="empty-state"><div style="font-size:2.8rem;">${filter?'🔍':'👥'}</div><p>${filter?'Aucun résultat':'Aucun participant'}</p></div>`
+                : list.map(p => {
+                    const count = state.validations.filter(v => v.participantId === p.id).length;
+                    return `
+                        <div class="participant-item ${state.selectedParticipantId === p.id ? 'selected' : ''}" data-id="${p.id}">
+                            <div style="font-weight:500;">${p.prenom} ${p.nom}</div>
+                            <div class="text-muted">${p.id}</div>
+                            ${count > 0 ? `<div style="margin-top:0.2rem; color:var(--success);">Validations : ${count}</div>` : ""}
+                        </div>
+                    `;
+                }).join("");
+
+            dom.participantsCount.textContent = state.participants.length;
+        }
+
+        function selectParticipant(id) {
+            state.selectedParticipantId = id;
+            updateParticipantsList(dom.searchInput.value);
+            updateParticipantDetail();
+        }
+
+        function updateParticipantDetail() {
+            const p = state.participants.find(p => p.id === state.selectedParticipantId);
+            if (!p) {
+                dom.noSelected.style.display = "flex";
+                dom.kiosqueContainer.style.display = "none";
+                dom.selectedTitle.textContent = "Sélectionnez un participant";
+                return;
+            }
+
+            dom.selectedTitle.textContent = `${p.prenom} ${p.nom}`;
+            dom.noSelected.style.display = "none";
+            dom.kiosqueContainer.style.display = "block";
+
+            dom.detailNomPrenom.textContent = `${p.prenom} ${p.nom}`;
+            dom.detailId.textContent = `ID : ${p.id}`;
+            let extra = [];
+            if (p.email) extra.push(`✉️ ${p.email}`);
+            if (p.telephone) extra.push(`📞 ${p.telephone}`);
+            if (p.dateNaissance) extra.push(`🎂 ${p.dateNaissance}`);
+            dom.detailExtra.innerHTML = extra.join(" • ") || "Aucune info complémentaire";
+
+            updateKiosqueTabs();
+            updateKiosqueInfo();
+            updateProcessusList();
+            updateHistory();
+        }
+
+        function updateKiosqueTabs() {
+            document.querySelectorAll(".kiosque-tab").forEach(tab => {
+                const k = parseInt(tab.dataset.kiosque);
+                tab.classList.toggle("active", k === state.selectedKiosque);
+                const processusCount = (state.kiosques[k]?.processus?.length || 0) + 
+                    state.customProcesses.filter(c => c.participantId === state.selectedParticipantId && c.kiosqueId === k).length;
+                const validated = state.validations.filter(v => 
+                    v.participantId === state.selectedParticipantId && v.kiosqueId === k
+                ).length;
+                tab.classList.toggle("completed", processusCount > 0 && validated >= processusCount);
+            });
+        }
+
+        function updateKiosqueInfo() {
+            const k = state.kiosques[state.selectedKiosque];
+            if (!k) return;
+            const customCount = state.customProcesses.filter(c => 
+                c.participantId === state.selectedParticipantId && c.kiosqueId === state.selectedKiosque
+            ).length;
+            const totalProcessus = (k.processus?.length || 0) + customCount;
+            dom.kiosqueDetails.innerHTML = `<strong>${k.name}</strong><br><small style="color:var(--text-muted);">${totalProcessus} étape(s) (${customCount} personnalisée(s))</small>`;
+        }
+
+        function updateProcessusList() {
+            const k = state.kiosques[state.selectedKiosque];
+            if (!k) {
+                dom.processusContainer.innerHTML = "<p>Aucun processus défini</p>";
+                return;
+            }
+
+            const vals = state.validations.filter(v => 
+                v.participantId === state.selectedParticipantId && v.kiosqueId === state.selectedKiosque
+            );
+
+            let html = '';
+
+            if (k.processus && k.processus.length > 0) {
+                html += `<div style="margin-bottom:0.3rem; color:var(--text-secondary);"><strong>Processus prédéfinis</strong></div>`;
+                k.processus.forEach(name => {
+                    const checked = vals.some(v => v.processusName === name);
+                    html += `
+                        <div class="processus-item">
+                            <input type="checkbox" class="processus-checkbox" 
+                                   ${checked ? "checked" : ""} 
+                                   data-name="${name}">
+                            <label>${name}</label>
+                        </div>
+                    `;
+                });
+            }
+
+            const customs = state.customProcesses.filter(c => 
+                c.participantId === state.selectedParticipantId && c.kiosqueId === state.selectedKiosque
+            );
+            if (customs.length > 0) {
+                html += `<div style="margin-top:0.8rem; margin-bottom:0.3rem; color:var(--text-secondary);"><strong>Processus personnalisés</strong></div>`;
+                customs.forEach(custom => {
+                    const checked = vals.some(v => v.customProcessId === custom.id);
+                    html += `
+                        <div class="processus-item">
+                            <input type="checkbox" class="processus-checkbox" 
+                                   ${checked ? "checked" : ""} 
+                                   data-custom-id="${custom.id}">
+                            <label>${custom.processName} <span style="color:var(--text-muted); font-size:0.75rem;">(personnalisée)</span></label>
+                            <button class="processus-remove" data-custom-id="${custom.id}" title="Supprimer cette étape personnalisée">🗑️</button>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `
+                <div class="custom-processus-add">
+                    <input type="text" id="new-custom-process" class="form-control" placeholder="Nom de l'étape personnalisée" style="flex:1;">
+                    <button id="add-custom-process-btn" class="btn btn-primary">➕ Ajouter</button>
+                </div>
+            `;
+
+            dom.processusContainer.innerHTML = html;
+
+            dom.processusContainer.querySelectorAll(".processus-checkbox[data-name]").forEach(cb => {
+                cb.addEventListener("change", e => {
+                    toggleProcessus(state.selectedKiosque, e.target.dataset.name, e.target.checked);
+                });
+            });
+
+            dom.processusContainer.querySelectorAll(".processus-checkbox[data-custom-id]").forEach(cb => {
+                cb.addEventListener("change", e => {
+                    toggleCustomProcessus(state.selectedKiosque, e.target.dataset.customId, e.target.checked);
+                });
+            });
+
+            dom.processusContainer.querySelectorAll(".processus-remove").forEach(btn => {
+                btn.addEventListener("click", e => {
+                    e.stopPropagation();
+                    const customId = btn.dataset.customId;
+                    if (confirm("Supprimer définitivement cette étape personnalisée ?")) {
+                        removeCustomProcess(customId);
+                    }
+                });
+            });
+
+            const addBtn = document.getElementById("add-custom-process-btn");
+            if (addBtn) {
+                addBtn.addEventListener("click", () => {
+                    const input = document.getElementById("new-custom-process");
+                    addCustomProcess(state.selectedParticipantId, state.selectedKiosque, input.value);
+                    input.value = '';
+                });
+            }
+        }
+
+        function toggleProcessus(kiosqueId, processusName, checked) {
+            if (!state.selectedParticipantId) return;
+
+            if (checked) {
+                state.validations.push({
+                    participantId: state.selectedParticipantId,
+                    kiosqueId,
+                    processusName,
+                    date: new Date().toISOString()
+                });
+            } else {
+                const idx = state.validations.findIndex(v => 
+                    v.participantId === state.selectedParticipantId &&
+                    v.kiosqueId === kiosqueId &&
+                    v.processusName === processusName
+                );
+                if (idx !== -1) state.validations.splice(idx, 1);
+            }
+
+            updateKiosqueTabs();
+            updateHistory();
+            updateStats();
+            updateParticipantsList(dom.searchInput.value);
+            saveState();
+        }
+
+        function toggleCustomProcessus(kiosqueId, customProcessId, checked) {
+            if (!state.selectedParticipantId) return;
+
+            if (checked) {
+                state.validations.push({
+                    participantId: state.selectedParticipantId,
+                    kiosqueId,
+                    customProcessId,
+                    date: new Date().toISOString()
+                });
+            } else {
+                const idx = state.validations.findIndex(v => 
+                    v.participantId === state.selectedParticipantId &&
+                    v.kiosqueId === kiosqueId &&
+                    v.customProcessId === customProcessId
+                );
+                if (idx !== -1) state.validations.splice(idx, 1);
+            }
+
+            updateKiosqueTabs();
+            updateHistory();
+            updateStats();
+            updateParticipantsList(dom.searchInput.value);
+            saveState();
+        }
+
+        function updateHistory() {
+            if (!state.selectedParticipantId) return;
+
+            const hist = state.validations
+                .filter(v => v.participantId === state.selectedParticipantId)
+                .sort((a,b) => new Date(b.date) - new Date(a.date))
+                .map(v => {
+                    let processName = v.processusName;
+                    if (v.customProcessId) {
+                        const custom = state.customProcesses.find(c => c.id === v.customProcessId);
+                        processName = custom ? custom.processName + ' (personnalisée)' : '[supprimé]';
+                    }
+                    return {
+                        ...v,
+                        displayName: processName
+                    };
+                });
+
+            dom.historyList.innerHTML = hist.length === 0
+                ? "<div class='empty-state' style='min-height:auto; padding:1rem;'><p>Aucune validation</p></div>"
+                : hist.map(v => `
+                    <div>
+                        <div><strong>K${v.kiosqueId}</strong> – ${v.displayName}</div>
+                        <div class="text-muted" style="font-size:0.75rem; margin-top:0.15rem;">
+                            ${new Date(v.date).toLocaleString("fr-FR")}
+                        </div>
+                    </div>
+                `).join("");
+        }
+
+        function updateStats() {
+            dom.participantsCount.textContent = state.participants.length;
+            dom.validationsCount.textContent = state.validations.length;
+        }
+
+        function resetSession(newSessionName = null) {
+            state.currentSession = {
+                id: `sess_${Date.now()}`,
+                name: newSessionName || "Session principale",
+                status: "active",
+                startDate: new Date().toISOString()
+            };
+            state.participants = [];
+            state.validations = [];
+            state.customProcesses = [];
+            state.selectedParticipantId = null;
+            state.selectedKiosque = 1;
+            saveState();
+            dom.sessionName.textContent = state.currentSession.name;
+            dom.sessionDate.textContent = new Date(state.currentSession.startDate).toLocaleDateString("fr-FR");
+            updateParticipantsList();
+            updateStats();
+            dom.noSelected.style.display = "flex";
+            dom.kiosqueContainer.style.display = "none";
+            dom.selectedTitle.textContent = "Sélectionnez un participant";
+        }
+
+        // ────────────────────────────────────────────────
+        // INITIALISATION
+        // ────────────────────────────────────────────────
+        function init() {
+            const saved = localStorage.getItem("kiosqueAppState");
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state.participants = parsed.participants || [];
+                state.validations = parsed.validations || [];
+                state.customProcesses = parsed.customProcesses || [];
+                state.selectedParticipantId = parsed.selectedParticipantId || null;
+                state.selectedKiosque = parsed.selectedKiosque || 1;
+                state.currentSession = parsed.currentSession || {
+                    id: `sess_${Date.now()}`,
+                    name: "Session principale",
+                    status: "active",
+                    startDate: new Date().toISOString()
+                };
+            }
+
+            dom.sessionName.textContent = state.currentSession.name;
+            dom.sessionDate.textContent = new Date(state.currentSession.startDate).toLocaleDateString("fr-FR");
+
+            updateParticipantsList();
+            updateStats();
+
+            if (state.selectedParticipantId) {
+                selectParticipant(state.selectedParticipantId);
+            }
+
+            enableSessionNameEditing();
+
+            dom.searchInput.addEventListener("input", e => updateParticipantsList(e.target.value));
+
+            document.querySelectorAll(".kiosque-tab").forEach(tab => {
+                tab.addEventListener("click", () => {
+                    state.selectedKiosque = parseInt(tab.dataset.kiosque);
+                    updateKiosqueTabs();
+                    updateKiosqueInfo();
+                    updateProcessusList();
+                });
+            });
+
+            document.getElementById("new-session-btn").addEventListener("click", () => {
+                const newName = prompt("Nom de la nouvelle session :", "Session principale");
+                if (newName !== null) {
+                    resetSession(newName.trim() || "Session principale");
+                }
+            });
+
+            document.getElementById("close-session-btn").addEventListener("click", () => {
+                if (confirm("Clôturer la session ? Les données seront exportées en CSV et le stockage local sera vidé.")) {
+                    exportSessionToCSV();
+                    localStorage.removeItem("kiosqueAppState");
+                    const newName = prompt("Nom de la nouvelle session :", "Session principale");
+                    resetSession(newName?.trim() || "Session principale");
+                    showToast("Session clôturée et exportée", "success");
+                }
+            });
+
+            document.getElementById("load-participants-btn").onclick = () => {
+                dom.fileModal.style.display = "flex";
+                dom.fileInput.value = "";
+                dom.filePreview.style.display = "none";
+                dom.importBtn.disabled = true;
+            };
+
+            dom.fileInput.onchange = e => { if(e.target.files[0]) handleFile(e.target.files[0]); };
+
+            // DRAG & DROP
+            const dropArea = document.getElementById("file-drop-area");
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+            dropArea.addEventListener("dragover", () => dropArea.classList.add("dragover"));
+            dropArea.addEventListener("dragleave", () => dropArea.classList.remove("dragover"));
+            dropArea.addEventListener("drop", (e) => {
+                dropArea.classList.remove("dragover");
+                const files = e.dataTransfer.files;
+                if (files.length > 0) handleFile(files[0]);
+            });
+            dropArea.addEventListener("click", () => dom.fileInput.click());
+
+            const closeModal = () => {
+                dom.fileModal.style.display = "none";
+                dom.fileInput.value = "";
+                dom.filePreview.style.display = "none";
+                dom.importBtn.disabled = true;
+            };
+            document.getElementById("close-file-modal").onclick = closeModal;
+            document.getElementById("cancel-file-btn").onclick = closeModal;
+
+            dom.participantsList.addEventListener("click", (e) => {
+                const item = e.target.closest(".participant-item");
+                if (item) selectParticipant(item.dataset.id);
+            });
+        }
+
+        window.addEventListener("DOMContentLoaded", init);
+    </script>
+</body>
+</html>
