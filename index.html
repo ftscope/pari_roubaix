@@ -563,6 +563,28 @@
             padding-bottom: 0.75rem !important;
         }
     </style>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDpEYaoB50KQP5uB3d3cCfUVXfwKx0iC74",
+    authDomain: "webapp-13034.firebaseapp.com",
+    projectId: "webapp-13034",
+    storageBucket: "webapp-13034.firebasestorage.app",
+    messagingSenderId: "478444742596",
+    appId: "1:478444742596:web:01d85f8cad015cf88c2691"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.doc = doc;
+  window.setDoc = setDoc;
+  window.getDoc = getDoc;
+  window.onSnapshot = onSnapshot;
+</script>
 </head>
 <body>
 
@@ -815,8 +837,13 @@
             setTimeout(() => toast.remove(), 5000);
         }
 
-        function saveState() {
-            localStorage.setItem("kiosqueAppState", JSON.stringify(state));
+        async function saveState() {
+        await setDoc(doc(db, "sessions", "currentSession"), {
+        participants: state.participants,
+        validations: state.validations,
+        customProcesses: state.customProcesses,
+        currentSession: state.currentSession
+            });
         }
 
         function capitalize(str) {
@@ -1424,21 +1451,30 @@
         // INITIALISATION
         // ────────────────────────────────────────────────
         function init() {
-            const saved = localStorage.getItem("kiosqueAppState");
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                state.participants = parsed.participants || [];
-                state.validations = parsed.validations || [];
-                state.customProcesses = parsed.customProcesses || [];
-                state.selectedParticipantId = parsed.selectedParticipantId || null;
-                state.selectedKiosque = parsed.selectedKiosque || 1;
-                state.currentSession = parsed.currentSession || {
-                    id: `sess_${Date.now()}`,
-                    name: "Session principale",
-                    status: "active",
-                    startDate: new Date().toISOString()
-                };
+
+    const docRef = doc(db, "sessions", "currentSession");
+
+    onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+
+            state.participants = data.participants || [];
+            state.validations = data.validations || [];
+            state.customProcesses = data.customProcesses || [];
+            state.currentSession = data.currentSession || state.currentSession;
+
+            dom.sessionName.textContent = state.currentSession.name;
+            dom.sessionDate.textContent =
+                new Date(state.currentSession.startDate).toLocaleDateString("fr-FR");
+
+            updateParticipantsList();
+            updateStats();
+
+            if (state.selectedParticipantId) {
+                updateParticipantDetail();
             }
+        }
+    });
 
             dom.sessionName.textContent = state.currentSession.name;
             dom.sessionDate.textContent = new Date(state.currentSession.startDate).toLocaleDateString("fr-FR");
