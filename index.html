@@ -441,9 +441,9 @@
         // ────────────────────────────────────────────────
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { 
-            getFirestore, 
-            collection, doc, setDoc, addDoc, deleteDoc, 
-            onSnapshot, query, where, getDocs, writeBatch 
+             getFirestore, 
+    collection, doc, setDoc, addDoc, deleteDoc, 
+    onSnapshot, query, where, getDocs, orderBy, limit
         } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         // Configuration Firebase (inchangée)
@@ -1256,19 +1256,30 @@
         // INITIALISATION
         // ────────────────────────────────────────────────
         window.addEventListener("DOMContentLoaded", async () => {
-            // Vérifier s'il y a un ID de session dans localStorage
-            let sessionId = localStorage.getItem("currentSessionId");
-            if (sessionId) {
-                // Tenter de charger cette session
-                try {
-                    await loadSession(sessionId);
-                } catch (e) {
-                    console.error("Erreur chargement session, création nouvelle", e);
-                    await initNewSession();
-                }
-            } else {
-                await initNewSession();
-            }
+
+    try {
+        // Chercher la dernière session active
+        const q = query(
+            collection(db, "sessions"),
+            where("status", "==", "active"),
+            orderBy("createdAt", "desc"),
+            limit(1)
+        );
+
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+            // Charger la session active existante
+            await loadSession(snap.docs[0].id);
+        } else {
+            // Aucune session active → en créer une
+            await initNewSession();
+        }
+
+    } catch (e) {
+        console.error("Erreur chargement session :", e);
+        await initNewSession();
+    }
 
             // Activation de l'édition du nom (une fois la session chargée)
             enableSessionNameEditing();
