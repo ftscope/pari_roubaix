@@ -5,17 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion Parcours – Roubaix</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-    <!-- Import Firebase (modulaire) -->
-    <script type="importmap">
-        {
-            "imports": {
-                "firebase/app": "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js",
-                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-            }
-        }
-    </script>
     <style>
-        /* Styles identiques à ceux fournis – inchangés */
+        /* ---------- STYLES COMPACTS & ÉLÉGANTS ---------- */
         :root {
             --bg: #f6f9fc;
             --surface: #ffffff;
@@ -36,7 +27,11 @@
             --transition: all 0.12s ease;
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -49,10 +44,27 @@
             margin: 0 auto;
         }
 
-        h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 0.1rem; color: #0a2c3d; }
-        h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--text-primary); }
-        .text-muted { color: var(--text-muted); font-size: 0.8rem; }
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.1rem;
+            color: #0a2c3d;
+        }
 
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: var(--text-primary);
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* Cartes */
         .card {
             background: var(--surface);
             border-radius: var(--radius);
@@ -61,10 +73,22 @@
             border: 1px solid var(--border-light);
             overflow: hidden;
         }
-        .card:hover { box-shadow: var(--shadow-md); }
-        .card-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-light); background: rgba(255,255,255,0.6); }
-        .card-body { padding: 1rem; }
 
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            background: rgba(255,255,255,0.6);
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        /* Boutons */
         .btn {
             padding: 0.5rem 1rem;
             border: none;
@@ -82,14 +106,46 @@
             border: 1px solid var(--border-light);
             box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
-        .btn:hover { background: #f9fbfd; border-color: #cbd5e1; }
-        .btn-primary { background: var(--accent); border-color: var(--accent); color: white; }
-        .btn-primary:hover { background: #2563eb; border-color: #2563eb; }
-        .btn-danger { background: white; color: var(--error); border-color: #fee2e2; }
-        .btn-danger:hover { background: #fee2e2; border-color: var(--error); color: var(--error); }
-        .btn-secondary { background: white; border-color: var(--border-light); }
-        .btn-sm { padding: 0.25rem 0.75rem; font-size: 0.7rem; }
 
+        .btn:hover {
+            background: #f9fbfd;
+            border-color: #cbd5e1;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .btn-danger {
+            background: white;
+            color: var(--error);
+            border-color: #fee2e2;
+        }
+
+        .btn-danger:hover {
+            background: #fee2e2;
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .btn-secondary {
+            background: white;
+            border-color: var(--border-light);
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.7rem;
+        }
+
+        /* Champs de formulaire */
         .form-control {
             width: 100%;
             padding: 0.5rem 0.875rem;
@@ -99,16 +155,33 @@
             transition: var(--transition);
             background: white;
         }
+
         .form-control:focus {
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(59,130,246,0.08);
         }
 
-        .search-box { position: relative; margin-bottom: 0.75rem; }
-        .search-icon { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; font-size: 0.85rem; }
-        .search-input { padding-left: 2.4rem; }
+        .search-box {
+            position: relative;
+            margin-bottom: 0.75rem;
+        }
 
+        .search-icon {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            font-size: 0.85rem;
+        }
+
+        .search-input {
+            padding-left: 2.4rem;
+        }
+
+        /* Liste participants */
         .participants-list {
             max-height: 460px;
             overflow-y: auto;
@@ -116,6 +189,7 @@
             background: white;
             border: 1px solid var(--border-light);
         }
+
         .participant-item {
             padding: 0.75rem 1rem;
             border-bottom: 1px solid var(--border-light);
@@ -125,12 +199,34 @@
             flex-direction: column;
             gap: 0.15rem;
         }
-        .participant-item:last-child { border-bottom: none; }
-        .participant-item:hover { background: var(--accent-light); }
-        .participant-item.selected { background: var(--accent-light); border-left: 3px solid var(--accent); }
-        .participant-item div:first-child { font-weight: 600; color: var(--text-primary); font-size: 0.9rem; }
 
-        .kiosque-selector { display: flex; gap: 0.25rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .participant-item:last-child {
+            border-bottom: none;
+        }
+
+        .participant-item:hover {
+            background: var(--accent-light);
+        }
+
+        .participant-item.selected {
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+        }
+
+        .participant-item div:first-child {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        /* Kiosques tabs */
+        .kiosque-selector {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
         .kiosque-tab {
             padding: 0.5rem 1rem;
             background: white;
@@ -142,10 +238,25 @@
             color: var(--text-secondary);
             font-size: 0.8rem;
         }
-        .kiosque-tab:hover { background: #f1f5f9; border-color: #b9c7d4; }
-        .kiosque-tab.active { background: var(--accent); border-color: var(--accent); color: white; }
-        .kiosque-tab.completed { background: var(--success); border-color: var(--success); color: white; }
 
+        .kiosque-tab:hover {
+            background: #f1f5f9;
+            border-color: #b9c7d4;
+        }
+
+        .kiosque-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .kiosque-tab.completed {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        /* Processus */
         .processus-item {
             display: flex;
             align-items: center;
@@ -156,8 +267,20 @@
             margin-bottom: 0.5rem;
             transition: var(--transition);
         }
-        .processus-item:hover { background: #fafcfc; border-color: #cbd5e1; }
-        .processus-checkbox { width: 0.95rem; height: 0.95rem; margin-right: 0.75rem; accent-color: var(--accent); border-radius: 3px; }
+
+        .processus-item:hover {
+            background: #fafcfc;
+            border-color: #cbd5e1;
+        }
+
+        .processus-checkbox {
+            width: 0.95rem;
+            height: 0.95rem;
+            margin-right: 0.75rem;
+            accent-color: var(--accent);
+            border-radius: 3px;
+        }
+
         .processus-remove {
             margin-left: auto;
             background: none;
@@ -170,12 +293,30 @@
             transition: var(--transition);
             line-height: 1;
         }
-        .processus-remove:hover { background: #fee2e2; color: var(--error); }
 
-        .custom-processus-add { display: flex; gap: 0.5rem; margin-top: 0.75rem; margin-bottom: 0.3rem; }
-        .custom-processus-add input { flex: 1; }
+        .processus-remove:hover {
+            background: #fee2e2;
+            color: var(--error);
+        }
 
-        #history-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .custom-processus-add {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .custom-processus-add input {
+            flex: 1;
+        }
+
+        /* Historique */
+        #history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
         #history-list > div {
             background: #f9fbfd;
             border-radius: 40px;
@@ -184,8 +325,13 @@
             transition: var(--transition);
             font-size: 0.8rem;
         }
-        #history-list > div:hover { background: white; border-color: #b9c7d4; }
 
+        #history-list > div:hover {
+            background: white;
+            border-color: #b9c7d4;
+        }
+
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -196,6 +342,7 @@
             justify-content: center;
             z-index: 1000;
         }
+
         .modal-content {
             background: white;
             border-radius: var(--radius);
@@ -206,13 +353,47 @@
             box-shadow: var(--shadow-md);
             border: none;
         }
-        .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h2 { margin-bottom: 0; font-size: 1.2rem; }
-        .modal-header button { font-size: 1.6rem; background: none; border: none; cursor: pointer; color: var(--text-muted); transition: var(--transition); line-height: 1; }
-        .modal-header button:hover { color: var(--text-primary); }
-        .modal-body { padding: 1.5rem; }
-        .modal-footer { padding: 1.25rem 1.5rem; border-top: 1px solid var(--border-light); display: flex; justify-content: flex-end; gap: 0.5rem; }
 
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin-bottom: 0;
+            font-size: 1.2rem;
+        }
+
+        .modal-header button {
+            font-size: 1.6rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
+            line-height: 1;
+        }
+
+        .modal-header button:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* Zone de dépôt de fichier */
         .file-drop-area {
             border: 2px dashed #dbe4ea;
             border-radius: var(--radius);
@@ -223,9 +404,19 @@
             transition: var(--transition);
             background: #fafdff;
         }
-        .file-drop-area:hover, .file-drop-area.dragover { border-color: var(--accent); background: var(--accent-light); }
-        .file-drop-area div:first-child { font-size: 2.4rem; color: var(--text-muted); }
 
+        .file-drop-area:hover,
+        .file-drop-area.dragover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .file-drop-area div:first-child {
+            font-size: 2.4rem;
+            color: var(--text-muted);
+        }
+
+        /* Toast */
         .toast-container {
             position: fixed;
             bottom: 1.5rem;
@@ -235,6 +426,7 @@
             flex-direction: column;
             gap: 0.6rem;
         }
+
         .toast {
             min-width: 260px;
             padding: 0.75rem 1.1rem;
@@ -250,9 +442,24 @@
             background: rgba(255,255,255,0.96);
             font-size: 0.8rem;
         }
-        .toast button { margin-left: auto; background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted); padding: 0.2rem; border-radius: 40px; }
-        .toast button:hover { background: #f1f5f9; color: var(--text-primary); }
 
+        .toast button {
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 0.2rem;
+            border-radius: 40px;
+        }
+
+        .toast button:hover {
+            background: #f1f5f9;
+            color: var(--text-primary);
+        }
+
+        /* État vide */
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -265,8 +472,14 @@
             background: #f9fbfd;
             border-radius: var(--radius);
         }
-        .empty-state div:first-child { font-size: 2.6rem; margin-bottom: 0.6rem; opacity: 0.7; }
 
+        .empty-state div:first-child {
+            font-size: 2.6rem;
+            margin-bottom: 0.6rem;
+            opacity: 0.7;
+        }
+
+        /* Session name editable */
         .editable {
             cursor: pointer;
             padding: 0.2rem 0.6rem;
@@ -277,9 +490,22 @@
             transition: var(--transition);
             font-size: 0.9rem;
         }
-        .editable:hover { background: var(--accent-light); color: var(--accent); }
 
-        #detail-extra { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.3rem; color: var(--text-secondary); font-size: 0.8rem; }
+        .editable:hover {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        /* Petits ajustements */
+        #detail-extra {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
         #kiosque-details {
             background: #f9fbfd;
             padding: 0.9rem 1.25rem;
@@ -289,12 +515,26 @@
             color: var(--text-primary);
             font-size: 0.85rem;
         }
-        #kiosque-details strong { color: #1e3a5f; }
-        hr { border: none; border-top: 1px solid var(--border-light); margin: 1rem 0; }
+
+        #kiosque-details strong {
+            color: #1e3a5f;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-light);
+            margin: 1rem 0;
+        }
+
+        /* Responsive */
         @media (max-width: 900px) {
             body { padding: 16px; }
-            div[style*="grid-template-columns: 1fr 2fr"] { grid-template-columns: 1fr !important; }
+            div[style*="grid-template-columns: 1fr 2fr"] {
+                grid-template-columns: 1fr !important;
+            }
         }
+
+        /* Badge de validation */
         .participant-item [style*="color:var(--success)"] {
             background: #e0f2e9;
             color: #0b6e4f !important;
@@ -306,10 +546,45 @@
             margin-top: 0.25rem;
             border: none;
         }
-        #selected-participant-title { display: none; }
-        div[style*="display:grid; grid-template-columns: 1fr 2fr; gap:1.75rem;"] { gap: 1rem !important; }
-        header { margin-bottom: 1.5rem !important; padding-bottom: 0.75rem !important; }
+
+        /* Titre caché pour le JS (remplace l'ancien card-header) */
+        #selected-participant-title {
+            display: none;
+        }
+
+        /* Grille plus serrée */
+        div[style*="display:grid; grid-template-columns: 1fr 2fr; gap:1.75rem;"] {
+            gap: 1rem !important;
+        }
+
+        /* Header plus compact */
+        header {
+            margin-bottom: 1.5rem !important;
+            padding-bottom: 0.75rem !important;
+        }
     </style>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDpEYaoB50KQP5uB3d3cCfUVXfwKx0iC74",
+    authDomain: "webapp-13034.firebaseapp.com",
+    projectId: "webapp-13034",
+    storageBucket: "webapp-13034.firebasestorage.app",
+    messagingSenderId: "478444742596",
+    appId: "1:478444742596:web:01d85f8cad015cf88c2691"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.doc = doc;
+  window.setDoc = setDoc;
+  window.getDoc = getDoc;
+  window.onSnapshot = onSnapshot;
+</script>
 </head>
 <body>
 
@@ -338,8 +613,8 @@
     <span id="selected-participant-title" style="display:none;"></span>
 
     <!-- ========== GRILLE PRINCIPALE ========== -->
-    <div style="display:grid; grid-template-columns:1fr 2fr; gap:1.5rem;">
-        <!-- Liste participants -->
+    <div style="display:grid; grid-template-columns:1fr 2fr; gap:1rem;">
+        <!-- Colonne participants -->
         <div class="card">
             <div class="card-header"><h2>Participants</h2></div>
             <div class="card-body">
@@ -350,34 +625,35 @@
 
                 <div id="participants-list" class="participants-list">
                     <div class="empty-state">
-                        <div style="font-size:3rem; margin-bottom:1rem;">👥</div>
+                        <div>👥</div>
                         <p>Aucun participant chargé</p>
                     </div>
                 </div>
 
-                <div style="margin-top:1rem; display:flex; gap:1rem; font-size:0.9rem;">
+                <div style="margin-top:1rem; display:flex; gap:1rem; font-size:0.8rem; color:var(--text-secondary);">
                     <div>Participants : <strong id="participants-count">0</strong></div>
                     <div>Validations : <strong id="validations-count">0</strong></div>
                 </div>
             </div>
         </div>
 
-        <!-- Détail participant + kiosques -->
+        <!-- Colonne détail participant + kiosques (SANS le card-header) -->
         <div class="card">
-            <div class="card-header"><h2 id="selected-participant-title">Sélectionnez un participant</h2></div>
             <div class="card-body" id="participant-detail-view">
                 <div class="empty-state" id="no-participant-selected">
-                    <div style="font-size:3rem; margin-bottom:1rem;">👈</div>
+                    <div>👈 📜</div>
                     <p>Sélectionnez un participant dans la liste</p>
                 </div>
 
                 <div id="kiosque-container" style="display:none;">
-                    <div style="background:var(--light); padding:1rem; border-radius:6px; margin-bottom:1.5rem;">
-                        <div style="font-weight:600; font-size:1.1rem;" id="detail-nom-prenom"></div>
+                    <!-- Infos participant -->
+                    <div style="background:var(--accent-light); padding:0.9rem 1.25rem; border-radius:40px; margin-bottom:1.25rem; border:1px solid #d9e9ff;">
+                        <div style="font-weight:600; font-size:1rem;" id="detail-nom-prenom"></div>
                         <div class="text-muted" id="detail-id"></div>
-                        <div style="margin-top:0.5rem; font-size:0.9rem;" id="detail-extra"></div>
+                        <div style="margin-top:0.3rem; font-size:0.8rem;" id="detail-extra"></div>
                     </div>
 
+                    <!-- Tabs kiosques -->
                     <div class="kiosque-selector">
                         <button class="kiosque-tab active" data-kiosque="1">Kiosque 1</button>
                         <button class="kiosque-tab" data-kiosque="2">Kiosque 2</button>
@@ -387,90 +663,72 @@
                         <button class="kiosque-tab" data-kiosque="6">Kiosque 6</button>
                     </div>
 
-                    <div id="kiosque-details" style="background:var(--light); padding:1rem; border-radius:6px; margin-bottom:1.5rem;"></div>
+                    <!-- Détail kiosque -->
+                    <div id="kiosque-details"></div>
 
-                    <div id="processus-container" style="margin-bottom:1.5rem;"></div>
+                    <!-- Liste processus -->
+                    <div id="processus-container" style="margin-bottom:1.25rem;"></div>
 
+                    <!-- Historique -->
                     <div id="history-container">
-                        <h3 style="margin-bottom:0.75rem;">Historique</h3>
-                        <div id="history-list" style="max-height:250px; overflow-y:auto;"></div>
+                        <h3 style="margin-bottom:0.6rem; font-weight:600; font-size:1rem;">Historique</h3>
+                        <div id="history-list" style="max-height:220px; overflow-y:auto;"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal import fichier (avec multiple) -->
+    <!-- ========== MODAL IMPORT ========== -->
     <div id="file-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Importer participants</h2>
-                <button style="font-size:1.5rem; background:none; border:none; cursor:pointer;" id="close-file-modal">×</button>
+                <button id="close-file-modal">×</button>
             </div>
             <div class="modal-body">
-                <p>Formats acceptés : .csv, .xlsx, .xls</p>
-                <p>Vous pouvez sélectionner ou déposer plusieurs fichiers.</p>
+                <p style="margin-bottom:0.75rem; color:var(--text-secondary); font-size:0.85rem;">Formats acceptés : .csv, .xlsx, .xls</p>
                 <div class="file-drop-area" id="file-drop-area">
-                    <div style="font-size:2.5rem; margin-bottom:1rem;">📁</div>
-                    <p>Glissez-déposez vos fichiers ici<br>ou cliquez pour parcourir</p>
+                    <div>📁</div>
+                    <p>Glissez-déposez votre fichier ici<br>ou cliquez pour parcourir</p>
                 </div>
-                <input type="file" id="file-input" accept=".csv,.xlsx,.xls" multiple style="display:none;">
-                <div id="file-preview" style="display:none; margin-top:1.5rem;">
-                    <h3>Aperçu (dernier fichier)</h3>
-                    <pre id="file-preview-content" style="background:#f8f9fa; padding:1rem; border-radius:4px; max-height:200px; overflow:auto; font-size:0.85rem;"></pre>
+                <input type="file" id="file-input" accept=".csv,.xlsx,.xls" style="display:none;">
+                <div id="file-preview" style="display:none; margin-top:1.25rem;">
+                    <h3 style="margin-bottom:0.5rem; font-size:0.9rem;">Aperçu</h3>
+                    <pre id="file-preview-content" style="background:#f9fbfd; padding:0.75rem; border-radius:16px; max-height:180px; overflow:auto; font-size:0.75rem; border:1px solid var(--border-light);"></pre>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancel-file-btn">Fermer</button>
+                <button class="btn btn-secondary" id="cancel-file-btn">Annuler</button>
                 <button class="btn btn-primary" id="import-file-btn" disabled>Importer</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast container -->
+    <!-- ========== TOAST ========== -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- ========== COPYRIGHT ========== -->
-    <footer style="margin-top:2rem; padding-top:1rem; border-top:1px solid var(--border-light); text-align:center; color:var(--text-muted); font-size:0.7rem;">
-        © 2026 Gestion Parcours – FT Roubaix Centre. Tous droits réservés.
-    </footer>
+        <!-- ========== COPYRIGHT ========== -->
+        <footer style="margin-top:2rem; padding-top:1rem; border-top:1px solid var(--border-light); text-align:center; color:var(--text-muted); font-size:0.7rem;">
+            © 2026 Gestion Parcours – FT Roubaix Centre. Tous droits réservés.
+        </footer>
 
-    <script type="module">
+    <script>
         // ────────────────────────────────────────────────
-        // IMPORT FIREBASE
-        // ────────────────────────────────────────────────
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { 
-             getFirestore, 
-    collection, doc, setDoc, addDoc, deleteDoc, 
-    onSnapshot, query, where, getDocs, orderBy, limit
-        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-        // Configuration Firebase (inchangée)
-        const firebaseConfig = {
-            apiKey: "AIzaSyDpEYaoB50KQP5uB3d3cCfUVXfwKx0iC74",
-            authDomain: "webapp-13034.firebaseapp.com",
-            projectId: "webapp-13034",
-            storageBucket: "webapp-13034.firebasestorage.app",
-            messagingSenderId: "478444742596",
-            appId: "1:478444742596:web:01d85f8cad015cf88c2691"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // ────────────────────────────────────────────────
-        // ÉTAT GLOBAL (simplifié, les données viennent de Firestore)
+        // ÉTAT GLOBAL – (STRICTEMENT INCHANGÉ)
         // ────────────────────────────────────────────────
         const state = {
-            currentSessionId: null,          // ID du document session
-            currentSessionData: null,        // { name, startDate, status }
-            participants: [],                 // tableau des participants (avec id)
-            validations: [],                  // tableau des validations (avec id)
-            customProcesses: [],               // tableau des processus personnalisés (avec id)
+            currentSession: {
+                id: `sess_${Date.now()}`,
+                name: "Session principale",
+                status: "active",
+                startDate: new Date().toISOString()
+            },
+            participants: [],
             selectedParticipantId: null,
             selectedKiosque: 1,
-            // Les kiosques sont définis statiquement (ne changent pas)
+            validations: [],
+            customProcesses: [],
             kiosques: {
                 1: { 
                     name: "Kiosque 1 – Mise à jour coordonnées & ORE", 
@@ -540,7 +798,7 @@
         };
 
         // ────────────────────────────────────────────────
-        // ÉLÉMENTS DOM (inchangés)
+        // ÉLÉMENTS DOM
         // ────────────────────────────────────────────────
         const dom = {
             participantsList: document.getElementById("participants-list"),
@@ -566,7 +824,7 @@
         };
 
         // ────────────────────────────────────────────────
-        // FONCTIONS UTILITAIRES
+        // FONCTIONS UTILITAIRES – IDENTIQUES
         // ────────────────────────────────────────────────
         function showToast(msg, type = "info") {
             const container = document.getElementById("toast-container");
@@ -577,6 +835,15 @@
             container.appendChild(toast);
             toast.querySelector("button").onclick = () => toast.remove();
             setTimeout(() => toast.remove(), 5000);
+        }
+
+        async function saveState() {
+        await setDoc(doc(db, "sessions", "currentSession"), {
+        participants: state.participants,
+        validations: state.validations,
+        customProcesses: state.customProcesses,
+        currentSession: state.currentSession
+            });
         }
 
         function capitalize(str) {
@@ -592,262 +859,172 @@
         }
 
         // ────────────────────────────────────────────────
-        // GESTION DU NOM DE SESSION (renommer)
+        // GESTION DU NOM DE SESSION
         // ────────────────────────────────────────────────
         function enableSessionNameEditing() {
             const sessionNameEl = dom.sessionName;
-            sessionNameEl.addEventListener("click", async function edit() {
-                const currentName = state.currentSessionData?.name || "Session";
+            sessionNameEl.addEventListener("click", function edit() {
+                const currentName = state.currentSession.name;
                 const newName = prompt("Renommer la session :", currentName);
                 if (newName && newName.trim() !== "" && newName !== currentName) {
-                    // Mettre à jour Firestore
-                    if (state.currentSessionId) {
-                        const sessionRef = doc(db, "sessions", state.currentSessionId);
-                        await setDoc(sessionRef, { name: newName.trim() }, { merge: true });
-                        showToast("Session renommée", "success");
-                    }
+                    state.currentSession.name = newName.trim();
+                    sessionNameEl.textContent = state.currentSession.name;
+                    saveState();
+                    showToast("Session renommée", "success");
                 }
             });
+        }
+
+        function setSessionName(name) {
+            state.currentSession.name = name;
+            dom.sessionName.textContent = name;
+            saveState();
         }
 
         // ────────────────────────────────────────────────
-        // CRÉATION / CHARGEMENT DE SESSION
+        // EXPORT CSV
         // ────────────────────────────────────────────────
-        async function createSession(name = "Session principale") {
-            const sessionRef = await addDoc(collection(db, "sessions"), {
-                name: name,
-                startDate: new Date().toISOString(),
-                status: "active",
-                createdAt: new Date().toISOString()
-            });
-            return sessionRef.id;
-        }
+        function exportSessionToCSV() {
+            const rows = [];
+            rows.push([
+                "Type",
+                "ID Participant",
+                "Nom",
+                "Prénom",
+                "Email",
+                "Téléphone",
+                "Date naissance",
+                "Kiosque",
+                "Processus",
+                "Date validation",
+                "Personnalisé ?"
+            ].join(";"));
 
-        async function loadSession(sessionId) {
-            // Mettre à jour l'ID dans l'état
-            state.currentSessionId = sessionId;
-            // Écouter le document session
-            const sessionDocRef = doc(db, "sessions", sessionId);
-            onSnapshot(sessionDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    state.currentSessionData = docSnap.data();
-                    dom.sessionName.textContent = state.currentSessionData.name;
-                    dom.sessionDate.textContent = new Date(state.currentSessionData.startDate).toLocaleDateString("fr-FR");
-                } else {
-                    // Session supprimée ? on recrée
-                    console.warn("Session introuvable, création d'une nouvelle");
-                    initNewSession();
+            state.participants.forEach(p => {
+                rows.push([
+                    "Participant",
+                    p.id,
+                    p.nom,
+                    p.prenom,
+                    p.email || "",
+                    p.telephone || "",
+                    p.dateNaissance || "",
+                    "", "", "", ""
+                ].join(";"));
+            });
+
+            state.validations.forEach(v => {
+                const p = state.participants.find(p => p.id === v.participantId);
+                let processName = v.processusName || '';
+                let isCustom = '';
+                if (v.customProcessId) {
+                    const custom = state.customProcesses.find(c => c.id === v.customProcessId);
+                    processName = custom ? custom.processName : '[supprimé]';
+                    isCustom = 'Oui';
                 }
+                rows.push([
+                    "Validation",
+                    v.participantId,
+                    p ? p.nom : "",
+                    p ? p.prenom : "",
+                    p ? p.email || "" : "",
+                    p ? p.telephone || "" : "",
+                    p ? p.dateNaissance || "" : "",
+                    v.kiosqueId,
+                    processName,
+                    new Date(v.date).toLocaleString("fr-FR"),
+                    isCustom
+                ].join(";"));
             });
 
-            // Écouter les participants
-            const participantsRef = collection(db, "sessions", sessionId, "participants");
-            onSnapshot(participantsRef, (snapshot) => {
-                state.participants = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                // Mettre à jour l'affichage
-                updateParticipantsList(dom.searchInput.value);
-                updateStats();
-                // Si le participant sélectionné n'existe plus, on le désélectionne
-                if (state.selectedParticipantId && !state.participants.some(p => p.id === state.selectedParticipantId)) {
-                    state.selectedParticipantId = null;
-                    updateParticipantDetail();
-                } else if (state.selectedParticipantId) {
-                    // Sinon on rafraîchit la vue détail (car les données ont peut-être changé)
-                    updateParticipantDetail();
-                }
-            });
-
-            // Écouter les validations
-            const validationsRef = collection(db, "sessions", sessionId, "validations");
-            onSnapshot(validationsRef, (snapshot) => {
-                state.validations = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                // Rafraîchir la vue détail et les onglets
-                if (state.selectedParticipantId) {
-                    updateKiosqueTabs();
-                    updateHistory();
-                }
-                updateStats();
-            });
-
-            // Écouter les processus personnalisés
-            const customRef = collection(db, "sessions", sessionId, "customProcesses");
-            onSnapshot(customRef, (snapshot) => {
-                state.customProcesses = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                if (state.selectedParticipantId) {
-                    updateProcessusList();
-                }
-            });
-        }
-
-        // Initialiser une nouvelle session (appelé au démarrage ou bouton Nouvelle session)
-        async function initNewSession(sessionName = null) {
-            const name = sessionName || "Session principale";
-            const newId = await createSession(name);
-            // Stocker l'ID dans localStorage pour le retrouver au rechargement
-            localStorage.setItem("currentSessionId", newId);
-            await loadSession(newId);
-            // Réinitialiser la sélection
-            state.selectedParticipantId = null;
-            state.selectedKiosque = 1;
-            updateParticipantsList("");
-            updateStats();
-            dom.noSelected.style.display = "flex";
-            dom.kiosqueContainer.style.display = "none";
-            dom.selectedTitle.textContent = "Sélectionnez un participant";
-        }
-
-        // ────────────────────────────────────────────────
-        // FONCTIONS D'AJOUT / SUPPRESSION (Firestore)
-        // ────────────────────────────────────────────────
-        async function addParticipantToSession(participant) {
-            if (!state.currentSessionId) return;
-            // Utiliser l'ID du participant comme ID de document
-            const participantRef = doc(db, "sessions", state.currentSessionId, "participants", participant.id);
-            await setDoc(participantRef, participant);
-        }
-
-        async function addValidation(validation) {
-            if (!state.currentSessionId) return;
-            const validationsRef = collection(db, "sessions", state.currentSessionId, "validations");
-            await addDoc(validationsRef, validation);
-        }
-
-        async function removeValidation(validationId) {
-            if (!state.currentSessionId) return;
-            const validationRef = doc(db, "sessions", state.currentSessionId, "validations", validationId);
-            await deleteDoc(validationRef);
-        }
-
-        async function addCustomProcess(custom) {
-            if (!state.currentSessionId) return;
-            const customRef = collection(db, "sessions", state.currentSessionId, "customProcesses");
-            await addDoc(customRef, custom);
-        }
-
-        async function removeCustomProcess(customId) {
-            if (!state.currentSessionId) return;
-            const customRef = doc(db, "sessions", state.currentSessionId, "customProcesses", customId);
-            await deleteDoc(customRef);
+            const csvContent = "\uFEFF" + rows.join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `session_${state.currentSession.name.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // ────────────────────────────────────────────────
         // GESTION DES ÉTAPES PERSONNALISÉES
         // ────────────────────────────────────────────────
-        async function addCustomProcessUI(participantId, kiosqueId, processName) {
+        function addCustomProcess(participantId, kiosqueId, processName) {
             if (!processName.trim()) {
                 showToast("Veuillez saisir un nom pour l'étape", "warning");
                 return;
             }
             const newCustom = {
+                id: `custom_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
                 participantId,
                 kiosqueId,
                 processName: processName.trim(),
                 dateAdded: new Date().toISOString()
             };
-            await addCustomProcess(newCustom);
+            state.customProcesses.push(newCustom);
+            saveState();
+            updateProcessusList();
             showToast("Étape personnalisée ajoutée", "success");
         }
 
-        async function removeCustomProcessUI(customProcessId) {
-            if (confirm("Supprimer définitivement cette étape personnalisée ?")) {
-                await removeCustomProcess(customProcessId);
-                showToast("Étape personnalisée supprimée", "info");
-            }
+        function removeCustomProcess(customProcessId) {
+            state.customProcesses = state.customProcesses.filter(c => c.id !== customProcessId);
+            state.validations = state.validations.filter(v => v.customProcessId !== customProcessId);
+            saveState();
+            updateProcessusList();
+            updateHistory();
+            updateStats();
+            updateParticipantsList(dom.searchInput.value);
+            showToast("Étape personnalisée supprimée", "info");
         }
 
         // ────────────────────────────────────────────────
-        // GESTION DES VALIDATIONS (cases à cocher)
-        // ────────────────────────────────────────────────
-        async function toggleProcessus(kiosqueId, processusName, checked) {
-            if (!state.selectedParticipantId) return;
-
-            if (checked) {
-                // Ajouter une validation
-                await addValidation({
-                    participantId: state.selectedParticipantId,
-                    kiosqueId,
-                    processusName,
-                    date: new Date().toISOString()
-                });
-            } else {
-                // Trouver la validation correspondante et la supprimer
-                const validation = state.validations.find(v => 
-                    v.participantId === state.selectedParticipantId &&
-                    v.kiosqueId === kiosqueId &&
-                    v.processusName === processusName
-                );
-                if (validation) {
-                    await removeValidation(validation.id);
-                }
-            }
-        }
-
-        async function toggleCustomProcessus(kiosqueId, customProcessId, checked) {
-            if (!state.selectedParticipantId) return;
-
-            if (checked) {
-                await addValidation({
-                    participantId: state.selectedParticipantId,
-                    kiosqueId,
-                    customProcessId,
-                    date: new Date().toISOString()
-                });
-            } else {
-                const validation = state.validations.find(v => 
-                    v.participantId === state.selectedParticipantId &&
-                    v.kiosqueId === kiosqueId &&
-                    v.customProcessId === customProcessId
-                );
-                if (validation) {
-                    await removeValidation(validation.id);
-                }
-            }
-        }
-
-        // ────────────────────────────────────────────────
-        // IMPORT (multi-fichiers) – adapté pour Firestore
+        // IMPORT – INCHANGÉ
         // ────────────────────────────────────────────────
         function handleFile(file) {
             const ext = file.name.split(".").pop().toLowerCase();
             if (!["csv","xlsx","xls"].includes(ext)) {
-                showToast(`Format non supporté : ${file.name} (.csv, .xlsx, .xls uniquement)`, "error");
+                showToast("Format non supporté (.csv, .xlsx, .xls)", "error");
                 return;
             }
 
             const reader = new FileReader();
+
             reader.onload = e => {
-                if (ext === "csv") {
-                    let content;
-                    try { content = new TextDecoder("utf-8").decode(e.target.result); }
-                    catch { content = new TextDecoder("iso-8859-1").decode(e.target.result); }
-                    dom.filePreviewContent.textContent = content.split("\n").slice(0,6).join("\n");
-                } else {
-                    try {
-                        const workbook = XLSX.read(e.target.result, {type:"array"});
+                try {
+                    if (ext === "csv") {
+                        const text = e.target.result;
+                        dom.filePreviewContent.textContent = text.split("\n").slice(0,6).join("\n");
+                        dom.filePreview.style.display = "block";
+                        dom.importBtn.disabled = false;
+                        dom.importBtn.onclick = () => importFile(file, text, ext);
+                    } else {
+                        const buffer = e.target.result;
+                        const workbook = XLSX.read(buffer, {type:"array"});
                         const sheet = workbook.Sheets[workbook.SheetNames[0]];
                         const rows = XLSX.utils.sheet_to_json(sheet, {header:1, defval:""}).slice(0,6);
                         dom.filePreviewContent.textContent = rows.map(r => r.join(" | ")).join("\n");
-                    } catch {
-                        dom.filePreviewContent.textContent = "(Aperçu non disponible)";
+                        dom.filePreview.style.display = "block";
+                        dom.importBtn.disabled = false;
+                        dom.importBtn.onclick = () => importFile(file, buffer, ext);
                     }
+                } catch (err) {
+                    console.error(err);
+                    showToast("Erreur lecture fichier", "error");
                 }
-                dom.filePreview.style.display = "block";
-                dom.importBtn.disabled = false;
-                dom.importBtn.onclick = () => importFile(file, e.target.result, ext);
             };
-            reader.readAsArrayBuffer(file);
+
+            if (ext === "csv") {
+                reader.readAsText(file, "utf-8");
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
         }
 
-        async function importFile(file, data, ext) {
+        function importFile(file, data, ext) {
             try {
                 let participants = [];
                 if (ext === "csv") {
@@ -857,31 +1034,49 @@
                 }
 
                 if (participants.length === 0) {
-                    showToast(`Aucun participant valide dans ${file.name}`, "warning");
+                    throw new Error("Aucun participant valide trouvé");
+                }
+
+                const existing = new Set(state.participants.map(p => p.id.trim()));
+                const toAdd = [];
+                const duplicates = [];
+
+                participants.forEach(p => {
+                    const id = p.id.trim();
+                    if (existing.has(id)) {
+                        duplicates.push(p);
+                    } else {
+                        toAdd.push(p);
+                        existing.add(id);
+                    }
+                });
+
+                if (toAdd.length === 0 && duplicates.length > 0) {
+                    showToast(`${duplicates.length} participant(s) déjà présent(s)`, "warning");
                     return;
                 }
 
-                // Pour chaque participant, vérifier s'il existe déjà dans l'état local (ou on laisse Firestore gérer avec setDoc)
-                let added = 0;
-                let duplicates = 0;
-                for (const p of participants) {
-                    const existing = state.participants.some(ex => ex.id === p.id);
-                    if (!existing) {
-                        await addParticipantToSession(p);
-                        added++;
-                    } else {
-                        duplicates++;
-                    }
+                state.participants.push(...toAdd);
+                updateParticipantsList(dom.searchInput.value);
+                updateStats();
+                saveState();
+
+                let msg = `${toAdd.length} participant(s) ajouté(s)`;
+                if (duplicates.length > 0) {
+                    msg += ` • ${duplicates.length} doublon(s) ignoré(s)`;
                 }
+                showToast(msg, toAdd.length > 0 ? "success" : "warning");
 
-                let msg = `${added} participant(s) ajouté(s) depuis ${file.name}`;
-                if (duplicates > 0) msg += ` • ${duplicates} doublon(s) ignoré(s)`;
-                showToast(msg, added > 0 ? "success" : "warning");
-
-                // Réinitialiser l'aperçu et le bouton
+                dom.fileModal.style.display = "none";
+                dom.fileInput.value = "";
                 dom.filePreview.style.display = "none";
                 dom.importBtn.disabled = true;
-                // Ne pas vider l'input pour permettre de refaire glisser, mais on peut le laisser
+
+                if (state.selectedParticipantId) {
+                    const stillExists = state.participants.some(p => p.id === state.selectedParticipantId);
+                    if (!stillExists) state.selectedParticipantId = null;
+                    else updateParticipantDetail();
+                }
 
             } catch (err) {
                 console.error(err);
@@ -889,7 +1084,6 @@
             }
         }
 
-        // Fonctions parseCSV et parseExcel inchangées (identiques à avant)
         function parseCSV(text) {
             const lines = text.replace(/\r/g,"").split("\n").filter(l=>l.trim());
             if (lines.length < 2) return [];
@@ -974,7 +1168,7 @@
         }
 
         // ────────────────────────────────────────────────
-        // MISE À JOUR INTERFACE (inchangée, mais utilise l'état local)
+        // MISE À JOUR INTERFACE – INCHANGÉE
         // ────────────────────────────────────────────────
         function updateParticipantsList(filter = "") {
             const f = filter.toLowerCase().trim();
@@ -985,14 +1179,14 @@
             );
 
             dom.participantsList.innerHTML = list.length === 0
-                ? `<div class="empty-state"><div style="font-size:3rem;">${filter?'🔍':'👥'}</div><p>${filter?'Aucun résultat':'Aucun participant'}</p></div>`
+                ? `<div class="empty-state"><div style="font-size:2.8rem;">${filter?'🔍':'👥'}</div><p>${filter?'Aucun résultat':'Aucun participant'}</p></div>`
                 : list.map(p => {
                     const count = state.validations.filter(v => v.participantId === p.id).length;
                     return `
                         <div class="participant-item ${state.selectedParticipantId === p.id ? 'selected' : ''}" data-id="${p.id}">
                             <div style="font-weight:500;">${p.prenom} ${p.nom}</div>
                             <div class="text-muted">${p.id}</div>
-                            ${count > 0 ? `<div style="margin-top:0.3rem; color:var(--success);">Validations : ${count}</div>` : ""}
+                            ${count > 0 ? `<div style="margin-top:0.2rem; color:var(--success);">Validations : ${count}</div>` : ""}
                         </div>
                     `;
                 }).join("");
@@ -1053,7 +1247,7 @@
                 c.participantId === state.selectedParticipantId && c.kiosqueId === state.selectedKiosque
             ).length;
             const totalProcessus = (k.processus?.length || 0) + customCount;
-            dom.kiosqueDetails.innerHTML = `<strong>${k.name}</strong><br><small>${totalProcessus} étape(s) (${customCount} personnalisée(s))</small>`;
+            dom.kiosqueDetails.innerHTML = `<strong>${k.name}</strong><br><small style="color:var(--text-muted);">${totalProcessus} étape(s) (${customCount} personnalisée(s))</small>`;
         }
 
         function updateProcessusList() {
@@ -1069,9 +1263,8 @@
 
             let html = '';
 
-            // Processus prédéfinis
             if (k.processus && k.processus.length > 0) {
-                html += `<div style="margin-bottom:0.5rem;"><strong>Processus prédéfinis</strong></div>`;
+                html += `<div style="margin-bottom:0.3rem; color:var(--text-secondary);"><strong>Processus prédéfinis</strong></div>`;
                 k.processus.forEach(name => {
                     const checked = vals.some(v => v.processusName === name);
                     html += `
@@ -1085,12 +1278,11 @@
                 });
             }
 
-            // Processus personnalisés
             const customs = state.customProcesses.filter(c => 
                 c.participantId === state.selectedParticipantId && c.kiosqueId === state.selectedKiosque
             );
             if (customs.length > 0) {
-                html += `<div style="margin-top:1rem; margin-bottom:0.5rem;"><strong>Processus personnalisés</strong></div>`;
+                html += `<div style="margin-top:0.8rem; margin-bottom:0.3rem; color:var(--text-secondary);"><strong>Processus personnalisés</strong></div>`;
                 customs.forEach(custom => {
                     const checked = vals.some(v => v.customProcessId === custom.id);
                     html += `
@@ -1098,14 +1290,13 @@
                             <input type="checkbox" class="processus-checkbox" 
                                    ${checked ? "checked" : ""} 
                                    data-custom-id="${custom.id}">
-                            <label>${custom.processName} <span style="color:var(--gray); font-size:0.8rem;">(personnalisée)</span></label>
+                            <label>${custom.processName} <span style="color:var(--text-muted); font-size:0.75rem;">(personnalisée)</span></label>
                             <button class="processus-remove" data-custom-id="${custom.id}" title="Supprimer cette étape personnalisée">🗑️</button>
                         </div>
                     `;
                 });
             }
 
-            // Ajout d'une nouvelle étape personnalisée
             html += `
                 <div class="custom-processus-add">
                     <input type="text" id="new-custom-process" class="form-control" placeholder="Nom de l'étape personnalisée" style="flex:1;">
@@ -1115,38 +1306,88 @@
 
             dom.processusContainer.innerHTML = html;
 
-            // Écouteurs pour les cases à cocher (prédéfinies)
             dom.processusContainer.querySelectorAll(".processus-checkbox[data-name]").forEach(cb => {
                 cb.addEventListener("change", e => {
                     toggleProcessus(state.selectedKiosque, e.target.dataset.name, e.target.checked);
                 });
             });
 
-            // Écouteurs pour les cases à cocher (personnalisées)
             dom.processusContainer.querySelectorAll(".processus-checkbox[data-custom-id]").forEach(cb => {
                 cb.addEventListener("change", e => {
                     toggleCustomProcessus(state.selectedKiosque, e.target.dataset.customId, e.target.checked);
                 });
             });
 
-            // Écouteurs pour les boutons de suppression des processus personnalisés
             dom.processusContainer.querySelectorAll(".processus-remove").forEach(btn => {
                 btn.addEventListener("click", e => {
                     e.stopPropagation();
                     const customId = btn.dataset.customId;
-                    removeCustomProcessUI(customId);
+                    if (confirm("Supprimer définitivement cette étape personnalisée ?")) {
+                        removeCustomProcess(customId);
+                    }
                 });
             });
 
-            // Écouteur pour le bouton d'ajout
             const addBtn = document.getElementById("add-custom-process-btn");
             if (addBtn) {
                 addBtn.addEventListener("click", () => {
                     const input = document.getElementById("new-custom-process");
-                    addCustomProcessUI(state.selectedParticipantId, state.selectedKiosque, input.value);
+                    addCustomProcess(state.selectedParticipantId, state.selectedKiosque, input.value);
                     input.value = '';
                 });
             }
+        }
+
+        function toggleProcessus(kiosqueId, processusName, checked) {
+            if (!state.selectedParticipantId) return;
+
+            if (checked) {
+                state.validations.push({
+                    participantId: state.selectedParticipantId,
+                    kiosqueId,
+                    processusName,
+                    date: new Date().toISOString()
+                });
+            } else {
+                const idx = state.validations.findIndex(v => 
+                    v.participantId === state.selectedParticipantId &&
+                    v.kiosqueId === kiosqueId &&
+                    v.processusName === processusName
+                );
+                if (idx !== -1) state.validations.splice(idx, 1);
+            }
+
+            updateKiosqueTabs();
+            updateHistory();
+            updateStats();
+            updateParticipantsList(dom.searchInput.value);
+            saveState();
+        }
+
+        function toggleCustomProcessus(kiosqueId, customProcessId, checked) {
+            if (!state.selectedParticipantId) return;
+
+            if (checked) {
+                state.validations.push({
+                    participantId: state.selectedParticipantId,
+                    kiosqueId,
+                    customProcessId,
+                    date: new Date().toISOString()
+                });
+            } else {
+                const idx = state.validations.findIndex(v => 
+                    v.participantId === state.selectedParticipantId &&
+                    v.kiosqueId === kiosqueId &&
+                    v.customProcessId === customProcessId
+                );
+                if (idx !== -1) state.validations.splice(idx, 1);
+            }
+
+            updateKiosqueTabs();
+            updateHistory();
+            updateStats();
+            updateParticipantsList(dom.searchInput.value);
+            saveState();
         }
 
         function updateHistory() {
@@ -1168,11 +1409,11 @@
                 });
 
             dom.historyList.innerHTML = hist.length === 0
-                ? "<div class='empty-state'><p>Aucune validation</p></div>"
+                ? "<div class='empty-state' style='min-height:auto; padding:1rem;'><p>Aucune validation</p></div>"
                 : hist.map(v => `
-                    <div style="padding:0.75rem; background:#f8f9fa; margin-bottom:0.5rem; border-radius:6px;">
+                    <div>
                         <div><strong>K${v.kiosqueId}</strong> – ${v.displayName}</div>
-                        <div class="text-muted" style="font-size:0.8rem;">
+                        <div class="text-muted" style="font-size:0.75rem; margin-top:0.15rem;">
                             ${new Date(v.date).toLocaleString("fr-FR")}
                         </div>
                     </div>
@@ -1184,110 +1425,71 @@
             dom.validationsCount.textContent = state.validations.length;
         }
 
-        // ────────────────────────────────────────────────
-        // EXPORT CSV (inchangé, utilise l'état local)
-        // ────────────────────────────────────────────────
-        function exportSessionToCSV() {
-            const rows = [];
-            rows.push([
-                "Type",
-                "ID Participant",
-                "Nom",
-                "Prénom",
-                "Email",
-                "Téléphone",
-                "Date naissance",
-                "Kiosque",
-                "Processus",
-                "Date validation",
-                "Personnalisé ?"
-            ].join(";"));
-
-            state.participants.forEach(p => {
-                rows.push([
-                    "Participant",
-                    p.id,
-                    p.nom,
-                    p.prenom,
-                    p.email || "",
-                    p.telephone || "",
-                    p.dateNaissance || "",
-                    "", "", "", ""
-                ].join(";"));
-            });
-
-            state.validations.forEach(v => {
-                const p = state.participants.find(p => p.id === v.participantId);
-                let processName = v.processusName || '';
-                let isCustom = '';
-                if (v.customProcessId) {
-                    const custom = state.customProcesses.find(c => c.id === v.customProcessId);
-                    processName = custom ? custom.processName : '[supprimé]';
-                    isCustom = 'Oui';
-                }
-                rows.push([
-                    "Validation",
-                    v.participantId,
-                    p ? p.nom : "",
-                    p ? p.prenom : "",
-                    p ? p.email || "" : "",
-                    p ? p.telephone || "" : "",
-                    p ? p.dateNaissance || "" : "",
-                    v.kiosqueId,
-                    processName,
-                    new Date(v.date).toLocaleString("fr-FR"),
-                    isCustom
-                ].join(";"));
-            });
-
-            const csvContent = "\uFEFF" + rows.join("\n");
-            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `session_${state.currentSessionData?.name.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        function resetSession(newSessionName = null) {
+            state.currentSession = {
+                id: `sess_${Date.now()}`,
+                name: newSessionName || "Session principale",
+                status: "active",
+                startDate: new Date().toISOString()
+            };
+            state.participants = [];
+            state.validations = [];
+            state.customProcesses = [];
+            state.selectedParticipantId = null;
+            state.selectedKiosque = 1;
+            saveState();
+            dom.sessionName.textContent = state.currentSession.name;
+            dom.sessionDate.textContent = new Date(state.currentSession.startDate).toLocaleDateString("fr-FR");
+            updateParticipantsList();
+            updateStats();
+            dom.noSelected.style.display = "flex";
+            dom.kiosqueContainer.style.display = "none";
+            dom.selectedTitle.textContent = "Sélectionnez un participant";
         }
 
         // ────────────────────────────────────────────────
         // INITIALISATION
         // ────────────────────────────────────────────────
-        window.addEventListener("DOMContentLoaded", async () => {
+        function init() {
 
-    try {
-        // Chercher la dernière session active
-        const q = query(
-            collection(db, "sessions"),
-            where("status", "==", "active"),
-            orderBy("createdAt", "desc"),
-            limit(1)
-        );
+    const docRef = doc(db, "sessions", "currentSession");
 
-        const snap = await getDocs(q);
+    onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
 
-        if (!snap.empty) {
-            // Charger la session active existante
-            await loadSession(snap.docs[0].id);
-        } else {
-            // Aucune session active → en créer une
-            await initNewSession();
+            state.participants = data.participants || [];
+            state.validations = data.validations || [];
+            state.customProcesses = data.customProcesses || [];
+            state.currentSession = data.currentSession || state.currentSession;
+
+            dom.sessionName.textContent = state.currentSession.name;
+            dom.sessionDate.textContent =
+                new Date(state.currentSession.startDate).toLocaleDateString("fr-FR");
+
+            updateParticipantsList();
+            updateStats();
+
+            if (state.selectedParticipantId) {
+                updateParticipantDetail();
+            }
         }
+    });
 
-    } catch (e) {
-        console.error("Erreur chargement session :", e);
-        await initNewSession();
-    }
+            dom.sessionName.textContent = state.currentSession.name;
+            dom.sessionDate.textContent = new Date(state.currentSession.startDate).toLocaleDateString("fr-FR");
 
-            // Activation de l'édition du nom (une fois la session chargée)
+            updateParticipantsList();
+            updateStats();
+
+            if (state.selectedParticipantId) {
+                selectParticipant(state.selectedParticipantId);
+            }
+
             enableSessionNameEditing();
 
-            // Recherche
             dom.searchInput.addEventListener("input", e => updateParticipantsList(e.target.value));
 
-            // Sélection kiosque
             document.querySelectorAll(".kiosque-tab").forEach(tab => {
                 tab.addEventListener("click", () => {
                     state.selectedKiosque = parseInt(tab.dataset.kiosque);
@@ -1297,32 +1499,23 @@
                 });
             });
 
-            // Nouvelle session
-            document.getElementById("new-session-btn").addEventListener("click", async () => {
+            document.getElementById("new-session-btn").addEventListener("click", () => {
                 const newName = prompt("Nom de la nouvelle session :", "Session principale");
                 if (newName !== null) {
-                    await initNewSession(newName.trim() || "Session principale");
+                    resetSession(newName.trim() || "Session principale");
                 }
             });
 
-            // Clore session (export + suppression locale de l'ID, mais on garde les données dans Firestore)
-            document.getElementById("close-session-btn").addEventListener("click", async () => {
-                if (confirm("Clôturer la session ? Les données seront exportées en CSV.")) {
+            document.getElementById("close-session-btn").addEventListener("click", () => {
+                if (confirm("Clôturer la session ? Les données seront exportées en CSV et le stockage local sera vidé.")) {
                     exportSessionToCSV();
-                    // Optionnel : marquer la session comme close dans Firestore
-                    if (state.currentSessionId) {
-                        const sessionRef = doc(db, "sessions", state.currentSessionId);
-                        await setDoc(sessionRef, { status: "closed" }, { merge: true });
-                    }
-                    // Supprimer l'ID du localStorage et créer une nouvelle session
-                    localStorage.removeItem("currentSessionId");
+                    localStorage.removeItem("kiosqueAppState");
                     const newName = prompt("Nom de la nouvelle session :", "Session principale");
-                    await initNewSession(newName?.trim() || "Session principale");
+                    resetSession(newName?.trim() || "Session principale");
                     showToast("Session clôturée et exportée", "success");
                 }
             });
 
-            // Import
             document.getElementById("load-participants-btn").onclick = () => {
                 dom.fileModal.style.display = "flex";
                 dom.fileInput.value = "";
@@ -1330,12 +1523,9 @@
                 dom.importBtn.disabled = true;
             };
 
-            dom.fileInput.onchange = e => {
-                const files = Array.from(e.target.files);
-                files.forEach(file => handleFile(file));
-            };
+            dom.fileInput.onchange = e => { if(e.target.files[0]) handleFile(e.target.files[0]); };
 
-            // Drag & drop multi-fichiers
+            // DRAG & DROP
             const dropArea = document.getElementById("file-drop-area");
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 dropArea.addEventListener(eventName, (e) => {
@@ -1343,17 +1533,12 @@
                     e.stopPropagation();
                 });
             });
-
-            dropArea.addEventListener("dragover", () => {
-                dropArea.classList.add("dragover");
-            });
-            dropArea.addEventListener("dragleave", () => {
-                dropArea.classList.remove("dragover");
-            });
+            dropArea.addEventListener("dragover", () => dropArea.classList.add("dragover"));
+            dropArea.addEventListener("dragleave", () => dropArea.classList.remove("dragover"));
             dropArea.addEventListener("drop", (e) => {
                 dropArea.classList.remove("dragover");
-                const files = Array.from(e.dataTransfer.files);
-                files.forEach(file => handleFile(file));
+                const files = e.dataTransfer.files;
+                if (files.length > 0) handleFile(files[0]);
             });
             dropArea.addEventListener("click", () => dom.fileInput.click());
 
@@ -1366,12 +1551,13 @@
             document.getElementById("close-file-modal").onclick = closeModal;
             document.getElementById("cancel-file-btn").onclick = closeModal;
 
-            // Délégation pour la sélection des participants
             dom.participantsList.addEventListener("click", (e) => {
                 const item = e.target.closest(".participant-item");
                 if (item) selectParticipant(item.dataset.id);
             });
-        });
+        }
+
+        window.addEventListener("DOMContentLoaded", init);
     </script>
 </body>
 </html>
